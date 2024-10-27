@@ -1,16 +1,15 @@
 #include <Arduino.h>
 #include <ESP32Servo.h>
-#include <WiFi.h>
-#define CUSTOM_SETTINGS
-#define INCLUDE_GAMEPAD_MODULE
-#include <DabbleESP32.h>
+#include <BluetoothSerial.h>
+
+
+BluetoothSerial SerialBT;
 
 Servo servoGarra;
 Servo servoAltura;
 Servo servoLejania;
 Servo servoEje;
 
-// Pines de los servos
 int pinServoGarra = 27;
 int pinServoAltura = 12;
 int pinServoLejania = 13;
@@ -23,21 +22,15 @@ int anguloServoAltura = 0;
 int anguloServoLejania = 0;
 int anguloServoEje = 0;
 
-void setup() {
-    servoGarra.attach(pinServoGarra);
-    servoAltura.attach(pinServoAltura);
-    servoLejania.attach(pinServoLejania);
-    servoEje.attach(pinServoEje);
-
-    Serial.begin(115200);
-
-    Dabble.begin("GarraDabble");
+void limpiarBuffer() {
+    while (SerialBT.available()) {
+        SerialBT.read();  // Descartar todo lo que esté en el búfer
+    }
 }
 
 void moverServo(Servo &servo, int &anguloActual, int anguloObjetivo) {
-    if (anguloObjetivo < 0) anguloObjetivo = 0; 
-    if (anguloObjetivo > 180) anguloObjetivo = 180; 
-    Serial.println(anguloObjetivo);
+    if (anguloObjetivo < 0) anguloObjetivo = 0; // Limite inferior
+    if (anguloObjetivo > 180) anguloObjetivo = 180; // Limite superior
 
     if (anguloActual < anguloObjetivo) {
         for (; anguloActual < anguloObjetivo; anguloActual += pasosAngulos) {
@@ -52,42 +45,61 @@ void moverServo(Servo &servo, int &anguloActual, int anguloObjetivo) {
     }
 }
 
+void setup() {
+    servoGarra.attach(pinServoGarra);
+    servoAltura.attach(pinServoAltura);
+    servoLejania.attach(pinServoLejania);
+    servoEje.attach(pinServoEje);
+
+    Serial.begin(9600);
+    SerialBT.begin(57600);
+
+    if (!SerialBT.begin("ESP32_Garra", true)) {
+        Serial.println("Error al iniciar el Bluetooth");
+        return;
+    }
+    Serial.println("Cliente Bluetooth iniciado. Conectando al servidor...");
+}
+
 void loop() {
-    Dabble.processInput();
+    if (SerialBT.available()) {
+        char command = SerialBT.read();
+        Serial.println(command);
 
-    // Comandos para los servos
-    if (GamePad.isUpPressed()) {
-        moverServo(servoAltura, anguloServoAltura, anguloServoAltura + 10);
-        Serial.println("subiendo");
+        switch (command) {
+            case 'U':
+                moverServo(servoAltura, anguloServoAltura, anguloServoAltura + 10);
+                break;
+            case 'D':
+                moverServo(servoAltura, anguloServoAltura, anguloServoAltura - 10);
+                break;
+            case 'R':
+                moverServo(servoEje, anguloServoEje, anguloServoEje + 10);
+                break;
+            case 'L':
+                moverServo(servoEje, anguloServoEje, anguloServoEje - 10);
+                break;
+            case 'O':
+                moverServo(servoGarra, anguloServoGarra, anguloServoGarra + 10);
+                break;
+            case 'C':
+                moverServo(servoGarra, anguloServoGarra, anguloServoGarra - 10);
+                break;
+            case 'F':
+                moverServo(servoLejania, anguloServoLejania, anguloServoLejania + 10);
+                break;
+            case 'B':
+                moverServo(servoLejania, anguloServoLejania, anguloServoLejania - 10);
+                break;
+            default:
+                limpiarBuffer();
+                break;
+        }
     }
-    if (GamePad.isDownPressed()) {
-        moverServo(servoAltura, anguloServoAltura, anguloServoAltura - 10);
-        Serial.println("bajando");
+    
+    if (SerialBT.available() > 100) {
+        limpiarBuffer();  // Limpiar el búfer
+        Serial.println("Búfer lleno, limpiado.");
     }
-    if (GamePad.isRightPressed()) {
-        moverServo(servoEje, anguloServoEje, anguloServoEje + 10);
-        Serial.println("derecha");
-    }
-    if (GamePad.isLeftPressed()) {
-        moverServo(servoEje, anguloServoEje, anguloServoEje - 10);
-        Serial.println("izquierda");
-    }
-    if (GamePad.isCirclePressed()) {
-        moverServo(servoGarra, anguloServoGarra, anguloServoGarra + 10);
-        Serial.println("abriendo");
-    }
-    if (GamePad.isCrossPressed()) {
-        moverServo(servoGarra, anguloServoGarra, anguloServoGarra - 10);
-        Serial.println("cerrando");
-    }
-    if (GamePad.isSquarePressed()) {
-        moverServo(servoLejania, anguloServoLejania, anguloServoLejania + 10);
-        Serial.println("delante");
-    }
-    if (GamePad.isTrianglePressed()) {
-        moverServo(servoLejania, anguloServoLejania, anguloServoLejania - 10);
-        Serial.println("atras");
-    }
-
-    delay(50); 
+    delay(100);
 }
