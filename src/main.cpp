@@ -88,6 +88,14 @@ void loop() {
         moverServo(servoLejania, anguloServoLejania, anguloServoLejania - 10);
         Serial.println("atras");
     }
+    if (GamePad.isStartPressed())
+    {
+        moverServo(servoAltura, anguloServoAltura, 0);
+        moverServo(servoEje, anguloServoEje, 0);
+        moverServo(servoGarra, anguloServoGarra, 0);
+        moverServo(servoLejania, anguloServoLejania, 0);
+    }
+    
 
     delay(50); 
 }
