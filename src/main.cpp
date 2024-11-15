@@ -41,6 +41,7 @@ void moverServoAltura(int anguloActual, int anguloObjetivo) {
             delay(10);
         }
     }
+    anguloServoAltura = anguloObjetivo;
 }
 
 void moverServoGarra(int anguloActual, int anguloObjetivo) {
@@ -61,6 +62,7 @@ void moverServoGarra(int anguloActual, int anguloObjetivo) {
             delay(10);
         }
     }
+    anguloServoGarra = anguloObjetivo;
 }
 
 void moverServoLejania(int anguloActual, int anguloObjetivo) {
@@ -81,6 +83,7 @@ void moverServoLejania(int anguloActual, int anguloObjetivo) {
             delay(10);
         }
     }
+    anguloServoLejania = anguloObjetivo;
 }
 
 void moverServoEje(int anguloActual, int anguloObjetivo) {
@@ -101,6 +104,7 @@ void moverServoEje(int anguloActual, int anguloObjetivo) {
             delay(10);
         }
     }
+    anguloServoEje = anguloObjetivo;
 }
 
 void reiniciarServos() {
