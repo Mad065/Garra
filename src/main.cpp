@@ -28,7 +28,7 @@ bool autonomo = false;
 void moverServoAltura(int anguloActual, int anguloObjetivo) {
 
     if (anguloObjetivo < 10) anguloObjetivo = 10; 
-    if (anguloObjetivo > 100) anguloObjetivo = 100;
+    if (anguloObjetivo > 90) anguloObjetivo = 90;
 
     Serial.println(anguloObjetivo);
 
@@ -170,18 +170,34 @@ void loop() {
             reiniciarServos();
         }
     } else {
-        if (GamePad.isStartPressed()) {
+        if (GamePad.isCirclePressed()) {
             moverServoEje(anguloServoEje, 180);
             moverServoAltura(anguloServoAltura, 10);
-            moverServoLejania(anguloServoLejania, 100);
             moverServoGarra(anguloServoGarra, 0);
+            moverServoLejania(anguloServoLejania, 100);
             moverServoGarra(anguloServoGarra, 30);
             moverServoLejania(anguloServoLejania, 20);
             moverServoAltura(anguloServoAltura, 180);
             moverServoEje(anguloServoEje, 0);
             moverServoAltura(anguloServoAltura, 10);
+            moverServoLejania(anguloServoLejania, 100);
             moverServoGarra(anguloServoGarra, 0);
+            moverServoLejania(anguloServoLejania, 0);
+            moverServoAltura(anguloServoAltura, 100);
+            reiniciarServos();
             Serial.println("secuencia circulo");
+        }
+        if (GamePad.isCrossPressed()) {
+            moverServoEje(anguloServoEje, 0);
+            moverServoGarra(anguloServoGarra, 30);
+            for (size_t i = 0; i < 5; i++)
+            {
+                moverServoAltura(anguloServoAltura, 180);
+                moverServoAltura(anguloServoAltura, 0);
+            }
+            
+
+            Serial.println("secuencia cruz");
         }
     }
     
