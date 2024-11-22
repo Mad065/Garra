@@ -23,6 +23,8 @@ int anguloServoAltura = 10;
 int anguloServoLejania = 0;
 int anguloServoEje = 0;
 
+bool autonomo = false;
+
 void moverServoAltura(int anguloActual, int anguloObjetivo) {
 
     if (anguloObjetivo < 10) anguloObjetivo = 10; 
@@ -129,42 +131,66 @@ void loop() {
     Dabble.processInput();
 
     // Comandos para los servos
-    if (GamePad.isUpPressed()) {
-        moverServoAltura(anguloServoAltura, anguloServoAltura + 10);
-        Serial.println("subiendo");
-    }
-    if (GamePad.isDownPressed()) {
-        moverServoAltura(anguloServoAltura, anguloServoAltura - 10);
-        Serial.println("bajando");
-    }
-    if (GamePad.isRightPressed()) {
-        moverServoEje(anguloServoEje, anguloServoEje + 10);
-        Serial.println("derecha");
-    }
-    if (GamePad.isLeftPressed()) {
-        moverServoEje(anguloServoEje, anguloServoEje - 10);
-        Serial.println("izquierda");
-    }
-    if (GamePad.isCirclePressed()) {
-        moverServoGarra(anguloServoGarra, anguloServoGarra + 10);
-        Serial.println("abriendo");
-    }
-    if (GamePad.isCrossPressed()) {
-        moverServoGarra(anguloServoGarra, anguloServoGarra - 10);
-        Serial.println("cerrando");
-    }
-    if (GamePad.isSquarePressed()) {
-        moverServoLejania(anguloServoLejania, anguloServoLejania + 10);
-        Serial.println("delante");
-    }
-    if (GamePad.isTrianglePressed()) {
-        moverServoLejania(anguloServoLejania, anguloServoLejania - 10);
-        Serial.println("atras");
-    }
-    if (GamePad.isStartPressed())
+    if (autonomo == false)
     {
-        reiniciarServos();
+        if (GamePad.isUpPressed()) {
+            moverServoAltura(anguloServoAltura, anguloServoAltura + 10);
+            Serial.println("subiendo");
+        }
+        if (GamePad.isDownPressed()) {
+            moverServoAltura(anguloServoAltura, anguloServoAltura - 10);
+            Serial.println("bajando");
+        }
+        if (GamePad.isRightPressed()) {
+            moverServoEje(anguloServoEje, anguloServoEje - 10);
+            Serial.println("derecha");
+        }
+        if (GamePad.isLeftPressed()) {
+            moverServoEje(anguloServoEje, anguloServoEje + 10);
+            Serial.println("izquierda");
+        }
+        if (GamePad.isCirclePressed()) {
+            moverServoGarra(anguloServoGarra, anguloServoGarra + 10);
+            Serial.println("cerrando");
+        }
+        if (GamePad.isCrossPressed()) {
+            moverServoGarra(anguloServoGarra, anguloServoGarra - 10);
+            Serial.println("abriendo");
+        }
+        if (GamePad.isSquarePressed()) {
+            moverServoLejania(anguloServoLejania, anguloServoLejania + 10);
+            Serial.println("delante");
+        }
+        if (GamePad.isTrianglePressed()) {
+            moverServoLejania(anguloServoLejania, anguloServoLejania - 10);
+            Serial.println("atras");
+        }
+        if (GamePad.isStartPressed())
+        {
+            reiniciarServos();
+        }
+    } else {
+        if (GamePad.isStartPressed()) {
+            moverServoEje(anguloServoEje, 180);
+            moverServoAltura(anguloServoAltura, 10);
+            moverServoLejania(anguloServoLejania, 100);
+            moverServoGarra(anguloServoGarra, 0);
+            moverServoGarra(anguloServoGarra, 30);
+            moverServoLejania(anguloServoLejania, 20);
+            moverServoAltura(anguloServoAltura, 180);
+            moverServoEje(anguloServoEje, 0);
+            moverServoAltura(anguloServoAltura, 10);
+            moverServoGarra(anguloServoGarra, 0);
+            Serial.println("secuencia circulo");
+        }
     }
+    
+    if (GamePad.isSelectPressed())
+    {
+        autonomo = !autonomo;
+        Serial.println("autonomo: " + String(autonomo));
+    }
+    
     
 
     delay(50); 
