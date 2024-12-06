@@ -171,23 +171,26 @@ void loop() {
         }
     } else {
         if (GamePad.isCirclePressed()) {
+            // Banda
             moverServoEje(anguloServoEje, 180);
             moverServoAltura(anguloServoAltura, 10);
-            moverServoGarra(anguloServoGarra, 0);
+            moverServoGarra(anguloServoGarra, 15);
             moverServoLejania(anguloServoLejania, 100);
+            delay(1000);
             moverServoGarra(anguloServoGarra, 30);
             moverServoLejania(anguloServoLejania, 20);
             moverServoAltura(anguloServoAltura, 180);
             moverServoEje(anguloServoEje, 0);
             moverServoAltura(anguloServoAltura, 10);
+            moverServoGarra(anguloServoGarra, 15);
             moverServoLejania(anguloServoLejania, 100);
-            moverServoGarra(anguloServoGarra, 0);
             moverServoLejania(anguloServoLejania, 0);
             moverServoAltura(anguloServoAltura, 100);
             reiniciarServos();
             Serial.println("secuencia circulo");
         }
         if (GamePad.isCrossPressed()) {
+            // Se la jala
             moverServoEje(anguloServoEje, 0);
             moverServoGarra(anguloServoGarra, 30);
             for (size_t i = 0; i < 5; i++)

@@ -2,6 +2,10 @@
 	"folders": [
 		{
 			"path": "."
+		},
+		{
+			"name": "Sensor color",
+			"path": "../Sensor color"
 		}
 	],
 	"settings": {
